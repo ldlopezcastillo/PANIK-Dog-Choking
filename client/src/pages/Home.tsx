@@ -19,12 +19,12 @@ import {
 } from "lucide-react";
 
 export default function Home() {
-  // --- ESTADO DE ACCESO / BLOQUEO ---
+  // --- ACCESS / LOCK STATE ---
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [accessCode, setAccessCode] = useState<string>("");
   const [accessError, setAccessError] = useState<string>("");
 
-  // Verificar si ya se ha accedido anteriormente en este dispositivo
+  // Check if access was previously granted on this device
   useEffect(() => {
     const savedAccess = localStorage.getItem("panik_authenticated");
     if (savedAccess === "true") {
@@ -40,26 +40,26 @@ export default function Home() {
       setIsAuthenticated(true);
       setAccessError("");
     } else {
-      setAccessError("Código incorrecto. Verifica tu manual o correo de compra.");
+      setAccessError("Incorrect code. Check your manual or purchase confirmation email.");
     }
   };
 
-  // --- ESTADO DEL MANUAL (HANDBOOK) ---
+  // --- HANDBOOK STATE ---
   const [currentPage, setCurrentPage] = useState<number>(0);
 
-  // --- ESTADO DE LA GUÍA INTERACTIVA (MODO INTERACTIVO) ---
+  // --- INTERACTIVE GUIDE STATE ---
   const [isInteractiveMode, setIsInteractiveMode] = useState<boolean>(false);
   const [interactiveStep, setInteractiveModeStep] = useState<number>(1);
   const [showInteractiveResult, setShowInteractiveResult] = useState<boolean>(false);
   const [showInteractiveDirectory, setShowInteractiveDirectory] = useState<boolean>(false);
 
-  // Respuestas del usuario en el Triage interactivo
+  // User answers in the interactive triage
   const [answers, setAnswers] = useState({
-    breathing: "",   // Paso 1: ¿Respira ahora mismo?
-    size: "",        // Paso 2: tamaño del perro (para Heimlich)
-    signs: "",       // Paso 3: signo más grave observado
-    time: "",        // Paso 4: cuánto tiempo lleva así
-    extra: [] as string[] // Paso 5: síntomas adicionales (multi-select)
+    breathing: "",   // Step 1: Is the dog breathing right now?
+    size: "",        // Step 2: Dog size (for Heimlich technique)
+    signs: "",       // Step 3: Most severe sign observed
+    time: "",        // Step 4: How long has this been going on
+    extra: [] as string[] // Step 5: Additional symptoms (multi-select)
   });
 
   const resetInteractiveFlow = () => {
@@ -75,38 +75,38 @@ export default function Home() {
     setShowInteractiveDirectory(false);
   };
 
-  // --- HANDLERS DE SELECCIÓN ---
+  // --- SELECTION HANDLERS ---
 
-  // Paso 1: ¿Respira ahora mismo?
+  // Step 1: Is the dog breathing right now?
   const handleBreathingSelect = (val: string) => {
     setAnswers(prev => ({ ...prev, breathing: val }));
-    // Si NO RESPIRA: salto directo a resultado (rama crítica sin pasar por 2-5)
-    if (val === "No respira / está inconsciente") {
+    // NOT BREATHING: jump directly to result (critical branch, skips steps 2–5)
+    if (val === "Not breathing / unconscious") {
       setShowInteractiveResult(true);
       return;
     }
     setInteractiveModeStep(2);
   };
 
-  // Paso 2: tamaño del perro
+  // Step 2: Dog size
   const handleSizeSelect = (val: string) => {
     setAnswers(prev => ({ ...prev, size: val }));
     setInteractiveModeStep(3);
   };
 
-  // Paso 3: signo más grave observado
+  // Step 3: Most severe sign observed
   const handleSignsSelect = (val: string) => {
     setAnswers(prev => ({ ...prev, signs: val }));
     setInteractiveModeStep(4);
   };
 
-  // Paso 4: tiempo transcurrido
+  // Step 4: Time elapsed
   const handleTimeSelect = (val: string) => {
     setAnswers(prev => ({ ...prev, time: val }));
     setInteractiveModeStep(5);
   };
 
-  // Paso 5: síntomas adicionales (multi-select)
+  // Step 5: Additional symptoms (multi-select)
   const toggleExtra = (symptom: string) => {
     setAnswers(prev => {
       const exists = prev.extra.includes(symptom);
@@ -122,89 +122,89 @@ export default function Home() {
     setShowInteractiveResult(true);
   };
 
-  // --- LÓGICA DE CÁLCULO DEL SEMÁFORO DE RIESGO PANIK ---
-  // ROJO = OBSTRUCCIÓN CRÍTICA
-  // AMARILLO = OBSTRUCCIÓN PARCIAL
-  // VERDE = EPISODIO RESUELTO
+  // --- PANIK RISK SEMAPHORE SCORING LOGIC ---
+  // RED    = CRITICAL OBSTRUCTION
+  // YELLOW = PARTIAL OBSTRUCTION
+  // GREEN  = EPISODE RESOLVED
   const calculateResultLevel = () => {
     const { breathing, signs, time, extra } = answers;
 
-    // 1. No respira / inconsciente → ROJO directo (atajo desde Paso 1)
-    if (breathing === "No respira / está inconsciente") {
+    // 1. Not breathing / unconscious → RED directly (shortcut from Step 1)
+    if (breathing === "Not breathing / unconscious") {
       return "RED";
     }
 
-    // 2. Síntomas críticos en Paso 5 (multi-select) → ROJO directo
-    const criticalExtras = ["Se desmayó / perdió el conocimiento", "Dejó de moverse de golpe"];
+    // 2. Critical symptoms in Step 5 (multi-select) → RED directly
+    const criticalExtras = ["Fainted / lost consciousness", "Stopped moving suddenly"];
     const hasCriticalExtra = extra.some(s => criticalExtras.includes(s));
     if (hasCriticalExtra) {
       return "RED";
     }
 
-    // 3. Signos críticos en Paso 3 → ROJO directo
+    // 3. Critical signs in Step 3 → RED directly
     const criticalSigns = [
-      "Encías azules, moradas o grises",
-      "No puede tragar / babea sin control",
-      "Rasca su cara con desesperación"
+      "Blue, purple, or gray gums",
+      "Cannot swallow / drooling uncontrollably",
+      "Pawing at face desperately"
     ];
     if (criticalSigns.includes(signs)) {
       return "RED";
     }
 
-    // 4. Vomitó tras el episodio → AMARILLO (requiere monitoreo médico)
-    if (extra.includes("Vomitó")) {
+    // 4. Vomited after the episode → YELLOW (requires medical monitoring)
+    if (extra.includes("Vomited")) {
       return "YELLOW";
     }
 
-    // 5. Signos moderados en Paso 3 → AMARILLO
+    // 5. Moderate signs in Step 3 → YELLOW
     const moderateSigns = [
-      "Tose con esfuerzo pero entra algo de aire",
-      "Estira el cuello hacia adelante"
+      "Coughing forcefully but some air is getting through",
+      "Neck stretched forward"
     ];
     if (moderateSigns.includes(signs)) {
       return "YELLOW";
     }
 
-    // 6. Lleva más de 3 minutos así, sin resolverse → AMARILLO (escalar precaución)
-    if (time === "Más de 3 minutos") {
+    // 6. Going on for more than 3 minutes, unresolved → YELLOW (escalate caution)
+    if (time === "More than 3 minutes") {
       return "YELLOW";
     }
 
-    // 7. Tosió y respira mejor + sin extras críticos → VERDE
-    if (signs === "Tosió y respira mejor") {
+    // 7. Coughed and breathing better + no critical extras → GREEN
+    if (signs === "Coughed and breathing better") {
       return "GREEN";
     }
 
-    // 8. Por defecto: si no hay señales críticas ni moderadas → VERDE
+    // 8. Default: no critical or moderate signs → GREEN
     return "GREEN";
   };
 
   const resultLevel = calculateResultLevel();
 
-  // Helper: tamaño del perro en lenguaje natural para el guion
+  // Helper: dog size in natural language for the vet script
   const sizeLabel = () => {
     switch (answers.size) {
-      case "Menos de 5 kg": return "pequeño (menos de 5 kg)";
-      case "5–10 kg": return "mediano-pequeño (5–10 kg)";
-      case "10–20 kg": return "mediano (10–20 kg)";
-      case "Más de 20 kg": return "grande (más de 20 kg)";
-      default: return "de tamaño no determinado";
+      case "Under 10 lbs": return "small (under 10 lbs)";
+      case "10–25 lbs": return "medium-small (10–25 lbs)";
+      case "25–50 lbs": return "medium (25–50 lbs)";
+      case "Over 50 lbs": return "large (over 50 lbs)";
+      default: return "undetermined size";
     }
   };
 
   // --- RENDERS ---
 
-  // PANTALLA DE ACCESO RESTRINGIDO (GATEKEEPER)
+  // RESTRICTED ACCESS SCREEN (GATEKEEPER)
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
-        {/* Grano de película de fondo */}
+        {/* Film grain background */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(230,46,46,0.08)_0%,transparent_70%)] pointer-events-none z-0" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWRGcz0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9Ii4wNSIvPgo8L3N2Zz4=')] opacity-30 pointer-events-none z-0" />
 
-        {/* Contenedor de Acceso */}
+        {/* Access Container */}
         <div className="w-full max-w-md z-10 flex flex-col items-center">
-          {/* Logo PANIK Premium */}
+          {/* PANIK Premium Logo */}
           <div className="flex flex-col items-center mb-8">
             <img
               src="/logo-panik.png"
@@ -220,9 +220,9 @@ export default function Home() {
                 <Lock className="w-5 h-5 text-[#E62E2E]" />
               </div>
 
-              <h2 className="font-serif text-2xl font-bold text-center mb-2 tracking-wide">ACCESO RESTRINGIDO</h2>
+              <h2 className="font-serif text-2xl font-bold text-center mb-2 tracking-wide">RESTRICTED ACCESS</h2>
               <p className="font-sans text-xs text-[#AAAAAA] text-center mb-6 leading-relaxed">
-                Ingresa tu código PANIK exclusivo para desbloquear el manual de decisión táctica y la guía interactiva.
+                Enter your exclusive PANIK code to unlock the tactical decision manual and interactive guide.
               </p>
 
               <form onSubmit={handleAccessSubmit} className="w-full space-y-4">
@@ -248,36 +248,36 @@ export default function Home() {
                   type="submit"
                   className="w-full bg-[#E62E2E] hover:bg-[#c22020] text-white font-sans font-bold tracking-widest rounded-none h-12 text-xs transition-all active:scale-[0.98]"
                 >
-                  DESBLOQUEAR SISTEMA
+                  UNLOCK SYSTEM
                 </Button>
               </form>
             </CardContent>
           </Card>
 
-          {/* Pie de página de seguridad */}
+          {/* Security footer */}
           <div className="mt-8 flex items-center gap-2 text-[#AAAAAA] font-sans text-[9px] tracking-wider">
             <ShieldAlert className="w-3 h-3 text-[#E62E2E]" />
-            <span>SISTEMA DE SEGURIDAD PANIK © 2026</span>
+            <span>PANIK SECURITY SYSTEM © 2026</span>
           </div>
         </div>
       </div>
     );
   }
 
-  // MODO INTERACTIVO (GUÍA DE DECISIÓN RÁPIDA)
+  // INTERACTIVE MODE (RAPID DECISION GUIDE)
   if (isInteractiveMode) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] text-white flex flex-col justify-between relative overflow-hidden font-sans">
-        {/* Textura de Grano Cinematográfico */}
+        {/* Cinematic grain texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(230,46,46,0.05)_0%,transparent_70%)] pointer-events-none z-0" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWRGcz0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9Ii4wNSIvPgo8L3N2Zz4=')] opacity-35 pointer-events-none z-0" />
 
-        {/* HEADER TÁCTICO */}
+        {/* TACTICAL HEADER */}
         <header className="border-b border-[#1A1A1A] bg-black/80 backdrop-blur-md p-4 flex items-center justify-between z-10 sticky top-0">
           <div className="flex items-center gap-3">
             <img src="/logo-panik.png" alt="PANIK Logo" className="h-[32px] object-contain" />
             <div className="h-4 w-[1px] bg-[#333333]" />
-            <span className="text-[10px] tracking-widest text-[#E62E2E] font-bold">MODO INTERACTIVO</span>
+            <span className="text-[10px] tracking-widest text-[#E62E2E] font-bold">INTERACTIVE MODE</span>
           </div>
           <Button
             variant="ghost"
@@ -287,19 +287,19 @@ export default function Home() {
             }}
             className="text-[#AAAAAA] hover:text-white text-xs tracking-wider font-bold flex items-center gap-1 hover:bg-transparent p-0"
           >
-            <ArrowLeft className="w-4 h-4" /> VOLVER AL MANUAL
+            <ArrowLeft className="w-4 h-4" /> BACK TO MANUAL
           </Button>
         </header>
 
-        {/* CONTENIDO PRINCIPAL */}
+        {/* MAIN CONTENT */}
         <main className="flex-1 flex flex-col justify-center px-4 py-6 max-w-lg mx-auto w-full z-10">
 
-          {/* DIRECTORIO DE EMERGENCIA DENTRO DEL MODO INTERACTIVO */}
+          {/* EMERGENCY DIRECTORY INSIDE INTERACTIVE MODE */}
           {showInteractiveDirectory ? (
             <div className="space-y-6">
               <div className="text-center space-y-2">
-                <h2 className="font-serif text-2xl font-bold tracking-wide text-white">DIRECTORIO DE EMERGENCIA</h2>
-                <p className="text-xs text-[#AAAAAA]">Toca cualquier tarjeta para llamar directamente desde tu celular.</p>
+                <h2 className="font-serif text-2xl font-bold tracking-wide text-white">EMERGENCY DIRECTORY</h2>
+                <p className="text-xs text-[#AAAAAA]">Tap any card to call directly from your phone.</p>
               </div>
 
               <div className="grid grid-cols-1 gap-3">
@@ -328,25 +328,25 @@ export default function Home() {
                   onClick={() => setShowInteractiveDirectory(false)}
                   className="flex-1 bg-transparent border border-[#333333] hover:bg-[#121212] text-white rounded-none h-12 text-xs font-bold tracking-wider"
                 >
-                  VOLVER AL RESULTADO
+                  BACK TO RESULT
                 </Button>
               </div>
             </div>
           ) : showInteractiveResult ? (
-            /* PANTALLA DE RESULTADOS DEL TRIAGE */
+            /* TRIAGE RESULTS SCREEN */
             <div className="space-y-6">
-              {/* Encabezado del Semáforo */}
+              {/* Semaphore Header */}
               <div className="text-center space-y-2">
-                <span className="text-[10px] tracking-[0.2em] text-[#AAAAAA] font-bold">DIAGNÓSTICO TÁCTICO</span>
+                <span className="text-[10px] tracking-[0.2em] text-[#AAAAAA] font-bold">TACTICAL ASSESSMENT</span>
 
                 {resultLevel === "RED" && (
                   <div className="bg-[#E62E2E]/10 border border-[#E62E2E]/30 p-6 space-y-3">
                     <div className="w-12 h-12 rounded-full bg-[#E62E2E]/20 border border-[#E62E2E] flex items-center justify-center mx-auto">
                       <AlertTriangle className="w-6 h-6 text-[#E62E2E]" />
                     </div>
-                    <h2 className="font-serif text-3xl font-bold tracking-wide text-[#E62E2E]">ROJO: OBSTRUCCIÓN CRÍTICA</h2>
+                    <h2 className="font-serif text-3xl font-bold tracking-wide text-[#E62E2E]">RED: CRITICAL OBSTRUCTION</h2>
                     <p className="text-xs text-white leading-relaxed">
-                      La vía respiratoria de tu perro está comprometida. Actúa de inmediato — cada segundo reduce el oxígeno disponible.
+                      Your dog's airway is compromised. Act immediately — every second reduces available oxygen.
                     </p>
                   </div>
                 )}
@@ -356,9 +356,9 @@ export default function Home() {
                     <div className="w-12 h-12 rounded-full bg-[#E8A000]/20 border border-[#E8A000] flex items-center justify-center mx-auto">
                       <Clock className="w-6 h-6 text-[#E8A000]" />
                     </div>
-                    <h2 className="font-serif text-3xl font-bold tracking-wide text-[#E8A000]">AMARILLO: OBSTRUCCIÓN PARCIAL</h2>
+                    <h2 className="font-serif text-3xl font-bold tracking-wide text-[#E8A000]">YELLOW: PARTIAL OBSTRUCTION</h2>
                     <p className="text-xs text-white leading-relaxed">
-                      Algo de aire está pasando, pero la situación puede empeorar. Monitorea de cerca y prepárate para escalar a Heimlich.
+                      Some air is getting through, but the situation can worsen. Monitor closely and be ready to escalate to the Heimlich maneuver.
                     </p>
                   </div>
                 )}
@@ -368,92 +368,92 @@ export default function Home() {
                     <div className="w-12 h-12 rounded-full bg-[#1E8A3E]/20 border border-[#1E8A3E] flex items-center justify-center mx-auto">
                       <CheckCircle2 className="w-6 h-6 text-[#1E8A3E]" />
                     </div>
-                    <h2 className="font-serif text-3xl font-bold tracking-wide text-[#1E8A3E]">VERDE: EPISODIO RESUELTO</h2>
+                    <h2 className="font-serif text-3xl font-bold tracking-wide text-[#1E8A3E]">GREEN: EPISODE RESOLVED</h2>
                     <p className="text-xs text-white leading-relaxed">
-                      Tu perro parece haber superado el episodio. Aún así, monitorea de cerca y revisa que no haya residuos.
+                      Your dog appears to have gotten through the episode. Still, monitor closely and check for any remaining debris.
                     </p>
                   </div>
                 )}
               </div>
 
-              {/* Contenido de Acción */}
+              {/* Action Content */}
               <div className="space-y-4">
                 <div className="bg-[#121212] border border-[#222222] p-5 space-y-3">
-                  <h4 className="font-sans font-bold text-xs text-white tracking-wider">QUÉ HACER AHORA:</h4>
+                  <h4 className="font-sans font-bold text-xs text-white tracking-wider">WHAT TO DO NOW:</h4>
                   <ul className="text-xs text-[#AAAAAA] space-y-2 list-disc pl-4 leading-relaxed">
                     {resultLevel === "RED" && (
                       <>
-                        <li>Abre la boca de tu perro: si ves el objeto y puedes agarrarlo con dos dedos sin empujarlo, retíralo.</li>
-                        <li>Si no sale, aplica la maniobra de Heimlich según el tamaño de tu perro (ver manual completo, Escenario correspondiente).</li>
-                        <li>Llama al veterinario de emergencias MIENTRAS aplicas la maniobra — no esperes a terminar para pedir ayuda.</li>
-                        <li>Si pierde el conocimiento, revisa que la vía esté libre y traslada de inmediato con la cabeza extendida, no doblada.</li>
+                        <li>Open your dog's mouth: if you can see the object and grab it with two fingers without pushing it deeper, remove it.</li>
+                        <li>If it won't come out, apply the Heimlich maneuver based on your dog's size (see the full manual, corresponding Scenario).</li>
+                        <li>Call an emergency vet WHILE applying the maneuver — do not wait until you're done to ask for help.</li>
+                        <li>If the dog loses consciousness, check that the airway is clear and transport immediately with the head extended, not bent.</li>
                       </>
                     )}
                     {resultLevel === "YELLOW" && (
                       <>
-                        <li>Mantén a tu perro tranquilo — no lo fuerces a moverse ni a caminar.</li>
-                        <li>No le des agua ni comida mientras la obstrucción no se resuelva por completo.</li>
-                        <li>Si tose con fuerza, déjalo: la tos natural puede expulsar el objeto solo.</li>
-                        <li>Llama a tu veterinario ahora para describir la situación y recibir indicaciones específicas.</li>
+                        <li>Keep your dog calm — do not force them to move or walk.</li>
+                        <li>Do not give water or food while the obstruction is not fully resolved.</li>
+                        <li>If coughing forcefully, let it happen: natural coughing can dislodge the object on its own.</li>
+                        <li>Call your vet now to describe the situation and receive specific instructions.</li>
                       </>
                     )}
                     {resultLevel === "GREEN" && (
                       <>
-                        <li>Revisa la boca de tu perro: ¿ves restos del objeto o algo más adentro?</li>
-                        <li>Ofrécele agua en pequeñas cantidades y observa si traga con normalidad.</li>
-                        <li>Observa su respiración durante los siguientes 20 a 30 minutos.</li>
-                        <li>Llama al veterinario de todas formas para documentar el episodio, aunque parezca resuelto.</li>
+                        <li>Check your dog's mouth: do you see any remnants of the object or anything else inside?</li>
+                        <li>Offer small amounts of water and observe whether they swallow normally.</li>
+                        <li>Watch their breathing for the next 20 to 30 minutes.</li>
+                        <li>Call the vet anyway to document the episode, even if everything seems fine.</li>
                       </>
                     )}
                   </ul>
                 </div>
 
                 <div className="bg-[#121212] border border-[#222222] p-5 space-y-3">
-                  <h4 className="font-sans font-bold text-xs text-[#E62E2E] tracking-wider">QUÉ NO HACER NUNCA:</h4>
+                  <h4 className="font-sans font-bold text-xs text-[#E62E2E] tracking-wider">WHAT NEVER TO DO:</h4>
                   <p className="text-xs text-[#AAAAAA] leading-relaxed">
-                    {resultLevel === "RED" && "NUNCA metas la mano a ciegas si no ves el objeto — puedes empujarlo más adentro y cerrar la vía por completo. No apliques RCP si hay obstrucción visible sin despejarla primero. No aplique más de 3 ciclos de Heimlich sin resultado: traslada de inmediato."}
-                    {resultLevel === "YELLOW" && "NUNCA le des agua, comida o aceite pensando que 'ayudará a pasar' el objeto — puede empeorar la obstrucción o provocar aspiración hacia los pulmones. No esperes pasivamente si las encías comienzan a cambiar de color."}
-                    {resultLevel === "GREEN" && "NUNCA asumas que 'ya pasó todo' sin observación. Algunos objetos quedan parcialmente atorados y la inflamación de garganta puede aparecer horas después, sin síntomas inmediatos."}
+                    {resultLevel === "RED" && "NEVER reach in blindly if you cannot see the object — you may push it deeper and fully close the airway. Do not attempt CPR if there is a visible obstruction without clearing it first. Do not apply more than 3 Heimlich cycles without result: transport immediately."}
+                    {resultLevel === "YELLOW" && "NEVER give water, food, or oil thinking it will 'help it pass' — it can worsen the obstruction or cause aspiration into the lungs. Do not wait passively if the gums start to change color."}
+                    {resultLevel === "GREEN" && "NEVER assume 'it's all over' without monitoring. Some objects remain partially lodged and throat swelling can appear hours later, with no immediate symptoms."}
                   </p>
                 </div>
 
-                {/* Guion para el veterinario */}
+                {/* Vet script */}
                 <div className="bg-[#1A1A1A] border border-[#E62E2E]/20 p-5 space-y-3">
                   <h4 className="font-sans font-bold text-xs text-white tracking-wider flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-[#E62E2E]" /> QUÉ DECIRLE AL VETERINARIO:
+                    <Activity className="w-4 h-4 text-[#E62E2E]" /> WHAT TO TELL THE VET:
                   </h4>
                   <p className="text-xs text-white italic bg-black/40 p-3 border-l-2 border-[#E62E2E] leading-relaxed">
-                    "Mi perro es {sizeLabel()}. Creo que tiene algo atorado o tuvo un episodio de asfixia hace aproximadamente {answers.time || "un tiempo que no pude determinar"}. {answers.breathing === "No respira / está inconsciente" ? "No estaba respirando al momento del episodio." : `Su estado al momento era: ${answers.breathing || "no determinado"}.`} {answers.signs ? `Observé lo siguiente: ${answers.signs}.` : ""} {answers.extra.length > 0 ? `También presentó: ${answers.extra.join(", ")}.` : "No presentó síntomas adicionales."} ¿Puedo ir ahora?"
+                    "My dog is {sizeLabel()}. I think they have something stuck or had a choking episode approximately {answers.time || "an undetermined amount of time"} ago. {answers.breathing === "Not breathing / unconscious" ? "They were not breathing at the time of the episode." : `Their condition at the time was: ${answers.breathing || "undetermined"}.`} {answers.signs ? `I observed the following: ${answers.signs}.` : ""} {answers.extra.length > 0 ? `They also showed: ${answers.extra.join(", ")}.` : "No additional symptoms were observed."} Should I come in now?"
                   </p>
                 </div>
               </div>
 
-              {/* Botones de Acción */}
+              {/* Action Buttons */}
               <div className="pt-4 flex flex-col gap-3">
                 <Button
                   onClick={() => setShowInteractiveDirectory(true)}
                   className="w-full bg-[#E62E2E] hover:bg-[#c22020] text-white rounded-none h-12 text-xs font-bold tracking-wider transition-all"
                 >
-                  VER DIRECTORIO DE EMERGENCIA {EMERGENCY_DIRECTORY.region}
+                  VIEW EMERGENCY DIRECTORY {EMERGENCY_DIRECTORY.region}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={resetInteractiveFlow}
                   className="w-full bg-transparent border border-[#333333] hover:bg-[#121212] text-white rounded-none h-12 text-xs font-bold tracking-wider"
                 >
-                  VOLVER A EMPEZAR EL DIAGNÓSTICO
+                  START TRIAGE OVER
                 </Button>
               </div>
             </div>
           ) : (
-            /* FLUJO DE PREGUNTAS PASO A PASO */
+            /* STEP-BY-STEP QUESTION FLOW */
             <div className="space-y-6">
 
-              {/* Barra de Progreso Táctica */}
+              {/* Tactical Progress Bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] tracking-widest text-[#AAAAAA] font-bold">
-                  <span>SISTEMA DE TRIAGE CANINO</span>
-                  <span>PASO {interactiveStep} DE 5</span>
+                  <span>CANINE TRIAGE SYSTEM</span>
+                  <span>STEP {interactiveStep} OF 5</span>
                 </div>
                 <div className="h-1 bg-[#1A1A1A] w-full">
                   <div
@@ -463,17 +463,17 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* PANTALLA 1: ¿Respira ahora mismo? */}
+              {/* SCREEN 1: Is the dog breathing right now? */}
               {interactiveStep === 1 && (
                 <div className="space-y-4">
-                  <h3 className="font-serif text-2xl font-bold tracking-wide text-white text-center">¿Respira ahora mismo?</h3>
-                  <p className="text-xs text-[#AAAAAA] text-center">Si no respira, te llevamos directo al protocolo crítico.</p>
+                  <h3 className="font-serif text-2xl font-bold tracking-wide text-white text-center">Is your dog breathing right now?</h3>
+                  <p className="text-xs text-[#AAAAAA] text-center">If not breathing, we'll take you straight to the critical protocol.</p>
                   <div className="grid grid-cols-1 gap-2">
                     {[
-                      "No respira / está inconsciente",
-                      "No sé / no estoy seguro",
-                      "Respira con dificultad o hace ruidos raros",
-                      "Tosió y ya está más tranquilo"
+                      "Not breathing / unconscious",
+                      "Not sure / can't tell",
+                      "Breathing with difficulty or making strange sounds",
+                      "Coughed and seems calmer now"
                     ].map((item, idx) => (
                       <Button
                         key={idx}
@@ -487,13 +487,13 @@ export default function Home() {
                 </div>
               )}
 
-              {/* PANTALLA 2: ¿Qué tamaño es tu perro? */}
+              {/* SCREEN 2: How big is your dog? */}
               {interactiveStep === 2 && (
                 <div className="space-y-4">
-                  <h3 className="font-serif text-2xl font-bold tracking-wide text-white text-center">¿Qué tamaño es tu perro?</h3>
-                  <p className="text-xs text-[#AAAAAA] text-center">Esto determina la técnica de Heimlich correcta.</p>
+                  <h3 className="font-serif text-2xl font-bold tracking-wide text-white text-center">How big is your dog?</h3>
+                  <p className="text-xs text-[#AAAAAA] text-center">This determines the correct Heimlich maneuver technique.</p>
                   <div className="grid grid-cols-1 gap-2">
-                    {["Menos de 5 kg", "5–10 kg", "10–20 kg", "Más de 20 kg", "No sé"].map((item, idx) => (
+                    {["Under 10 lbs", "10–25 lbs", "25–50 lbs", "Over 50 lbs", "Not sure"].map((item, idx) => (
                       <Button
                         key={idx}
                         onClick={() => handleSizeSelect(item)}
@@ -508,24 +508,24 @@ export default function Home() {
                     onClick={() => setInteractiveModeStep(1)}
                     className="text-[#AAAAAA] hover:text-white text-xs tracking-wider font-bold flex items-center gap-1 mx-auto mt-4"
                   >
-                    <ChevronLeft className="w-4 h-4" /> REGRESAR
+                    <ChevronLeft className="w-4 h-4" /> GO BACK
                   </Button>
                 </div>
               )}
 
-              {/* PANTALLA 3: ¿Qué ves en este momento? */}
+              {/* SCREEN 3: What do you see right now? */}
               {interactiveStep === 3 && (
                 <div className="space-y-4">
-                  <h3 className="font-serif text-2xl font-bold tracking-wide text-white text-center">¿Qué ves en este momento?</h3>
-                  <p className="text-xs text-[#AAAAAA] text-center">Elige el signo más grave que observas ahora.</p>
+                  <h3 className="font-serif text-2xl font-bold tracking-wide text-white text-center">What do you see right now?</h3>
+                  <p className="text-xs text-[#AAAAAA] text-center">Choose the most severe sign you are currently observing.</p>
                   <div className="grid grid-cols-1 gap-2">
                     {[
-                      "Encías azules, moradas o grises",
-                      "No puede tragar / babea sin control",
-                      "Rasca su cara con desesperación",
-                      "Tose con esfuerzo pero entra algo de aire",
-                      "Estira el cuello hacia adelante",
-                      "Tosió y respira mejor"
+                      "Blue, purple, or gray gums",
+                      "Cannot swallow / drooling uncontrollably",
+                      "Pawing at face desperately",
+                      "Coughing forcefully but some air is getting through",
+                      "Neck stretched forward",
+                      "Coughed and breathing better"
                     ].map((item, idx) => (
                       <Button
                         key={idx}
@@ -541,17 +541,17 @@ export default function Home() {
                     onClick={() => setInteractiveModeStep(2)}
                     className="text-[#AAAAAA] hover:text-white text-xs tracking-wider font-bold flex items-center gap-1 mx-auto mt-4"
                   >
-                    <ChevronLeft className="w-4 h-4" /> REGRESAR
+                    <ChevronLeft className="w-4 h-4" /> GO BACK
                   </Button>
                 </div>
               )}
 
-              {/* PANTALLA 4: ¿Cuánto tiempo lleva así? */}
+              {/* SCREEN 4: How long has this been going on? */}
               {interactiveStep === 4 && (
                 <div className="space-y-4">
-                  <h3 className="font-serif text-2xl font-bold tracking-wide text-white text-center">¿Cuánto tiempo lleva así?</h3>
+                  <h3 className="font-serif text-2xl font-bold tracking-wide text-white text-center">How long has this been going on?</h3>
                   <div className="grid grid-cols-1 gap-2">
-                    {["Menos de 1 minuto", "1–3 minutos", "Más de 3 minutos", "No sé"].map((item, idx) => (
+                    {["Less than 1 minute", "1–3 minutes", "More than 3 minutes", "Not sure"].map((item, idx) => (
                       <Button
                         key={idx}
                         onClick={() => handleTimeSelect(item)}
@@ -566,36 +566,36 @@ export default function Home() {
                     onClick={() => setInteractiveModeStep(3)}
                     className="text-[#AAAAAA] hover:text-white text-xs tracking-wider font-bold flex items-center gap-1 mx-auto mt-4"
                   >
-                    <ChevronLeft className="w-4 h-4" /> REGRESAR
+                    <ChevronLeft className="w-4 h-4" /> GO BACK
                   </Button>
                 </div>
               )}
 
-              {/* PANTALLA 5: ¿Tiene algo de esto también? (Selección Múltiple) */}
+              {/* SCREEN 5: Anything else? (Multi-select) */}
               {interactiveStep === 5 && (
                 <div className="space-y-4">
-                  <h3 className="font-serif text-2xl font-bold tracking-wide text-white text-center">¿Tiene algo de esto también?</h3>
-                  <p className="text-xs text-[#AAAAAA] text-center">Selecciona todos los que apliquen actualmente.</p>
+                  <h3 className="font-serif text-2xl font-bold tracking-wide text-white text-center">Anything else going on?</h3>
+                  <p className="text-xs text-[#AAAAAA] text-center">Select all that currently apply.</p>
 
                   <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-1">
                     {[
-                      "No, nada más",
-                      "Se desmayó / perdió el conocimiento",
-                      "Vomitó",
-                      "Dejó de moverse de golpe",
-                      "Sigue tosiendo fuerte"
+                      "None of the above",
+                      "Fainted / lost consciousness",
+                      "Vomited",
+                      "Stopped moving suddenly",
+                      "Still coughing hard"
                     ].map((symptom, idx) => {
                       const isSelected = answers.extra.includes(symptom);
                       return (
                         <Button
                           key={idx}
                           onClick={() => {
-                            if (symptom === "No, nada más") {
-                              setAnswers(prev => ({ ...prev, extra: ["No, nada más"] }));
+                            if (symptom === "None of the above") {
+                              setAnswers(prev => ({ ...prev, extra: ["None of the above"] }));
                             } else {
                               setAnswers(prev => ({
                                 ...prev,
-                                extra: prev.extra.filter(s => s !== "No, nada más")
+                                extra: prev.extra.filter(s => s !== "None of the above")
                               }));
                               toggleExtra(symptom);
                             }
@@ -621,14 +621,14 @@ export default function Home() {
                       onClick={() => setInteractiveModeStep(4)}
                       className="flex-1 bg-transparent border border-[#333333] hover:bg-[#121212] text-white rounded-none h-12 text-xs font-bold tracking-wider"
                     >
-                      REGRESAR
+                      GO BACK
                     </Button>
                     <Button
                       onClick={handleExtraSubmit}
                       disabled={answers.extra.length === 0}
                       className="flex-1 bg-[#E62E2E] hover:bg-[#c22020] text-white rounded-none h-12 text-xs font-bold tracking-wider disabled:opacity-50"
                     >
-                      VER RESULTADO
+                      SEE RESULT
                     </Button>
                   </div>
                 </div>
@@ -638,15 +638,15 @@ export default function Home() {
           )}
         </main>
 
-        {/* FOOTER TÁCTICO */}
+        {/* TACTICAL FOOTER */}
         <footer className="border-t border-[#1A1A1A] p-4 text-center text-[#AAAAAA] text-[9px] tracking-widest z-10 bg-black/50">
-          SISTEMA DE DECISIÓN CLÍNICA PANIK © 2026 · NO REEMPLAZA ATENCIÓN VETERINARIA
+          PANIK CLINICAL DECISION SYSTEM © 2026 · DOES NOT REPLACE VETERINARY CARE
         </footer>
       </div>
     );
   }
 
-  // MODO HANDBOOK (REVISTA EDITORIAL)
+  // HANDBOOK MODE (EDITORIAL MAGAZINE)
   const page = HANDBOOK_PAGES[currentPage];
 
   const handleNext = () => {
@@ -664,11 +664,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white flex flex-col justify-between relative overflow-hidden font-sans">
 
-      {/* Textura de Grano Cinematográfico y Efectos de Iluminación */}
+      {/* Cinematic grain texture and lighting effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(230,46,46,0.04)_0%,transparent_70%)] pointer-events-none z-0" />
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWRGcz0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9Ii4wNSIvPgo8L3N2Zz4=')] opacity-30 pointer-events-none z-0" />
 
-      {/* HEADER EDITORIAL */}
+      {/* EDITORIAL HEADER */}
       <header className="border-b border-[#1A1A1A] bg-black/60 backdrop-blur-md p-4 flex items-center justify-between z-10 sticky top-0">
         <div className="flex items-center gap-3">
           <img src="/logo-panik.png" alt="PANIK Logo" className="h-[32px] md:h-[42px] object-contain" />
@@ -680,7 +680,7 @@ export default function Home() {
             onClick={() => setIsInteractiveMode(true)}
             className="bg-[#E62E2E] hover:bg-[#c22020] text-white text-[10px] md:text-xs tracking-wider font-bold rounded-none px-4 h-9 transition-all active:scale-[0.98]"
           >
-            GUÍA INTERACTIVA
+            INTERACTIVE GUIDE
           </Button>
           <Button
             variant="ghost"
@@ -691,18 +691,17 @@ export default function Home() {
             }}
             className="text-[#AAAAAA] hover:text-[#E62E2E] text-[10px] tracking-wider font-bold flex items-center gap-1 hover:bg-transparent p-0"
           >
-            <Lock className="w-3.5 h-3.5" /> BLOQUEAR
+            <Lock className="w-3.5 h-3.5" /> LOCK
           </Button>
         </div>
       </header>
 
-      {/* CONTENIDO DE PÁGINA (ESTILO EDITORIAL ASIMÉTRICO) */}
+      {/* PAGE CONTENT (ASYMMETRIC EDITORIAL STYLE) */}
       <main className="flex-1 flex flex-col justify-center px-4 md:px-8 py-6 md:py-12 max-w-5xl mx-auto w-full z-10">
 
-        {/* RENDER SEGÚN TIPO DE PÁGINA */}
+        {/* RENDER BY PAGE TYPE */}
         {page.type === "cover" ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative min-h-[60vh]">
-            {/* Imagen de fondo integrada de forma asimétrica */}
             {page.bgImage && (
               <div className="lg:col-span-7 w-full h-[250px] sm:h-[350px] lg:h-[500px] relative overflow-hidden border border-[#1A1A1A] group">
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#0A0A0A] z-10" />
@@ -733,14 +732,14 @@ export default function Home() {
                   onClick={handleNext}
                   className="bg-[#E62E2E] hover:bg-[#c22020] text-white font-sans font-bold tracking-widest rounded-none h-12 text-xs px-8 transition-all active:scale-[0.98]"
                 >
-                  INICIAR MANUAL
+                  START MANUAL
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setIsInteractiveMode(true)}
                   className="bg-transparent border border-[#333333] hover:bg-[#121212] text-white font-sans font-bold tracking-widest rounded-none h-12 text-xs px-8"
                 >
-                  ABRIR GUÍA INTERACTIVA
+                  OPEN INTERACTIVE GUIDE
                 </Button>
               </div>
             </div>
@@ -807,7 +806,7 @@ export default function Home() {
                       <p className="text-xs text-white leading-relaxed">{lvl.desc}</p>
                     </div>
                     <div className="pt-4 border-t border-[#222222] space-y-1">
-                      <span className="text-[9px] tracking-widest text-[#AAAAAA] font-bold block">ACCIÓN INMEDIATA:</span>
+                      <span className="text-[9px] tracking-widest text-[#AAAAAA] font-bold block">IMMEDIATE ACTION:</span>
                       <p className="text-xs text-[#AAAAAA] italic leading-relaxed">{lvl.action}</p>
                     </div>
                   </div>
@@ -891,7 +890,7 @@ export default function Home() {
                 <div className="flex flex-wrap items-center gap-3">
                   <h2 className="font-serif text-3xl font-bold tracking-wide text-white">{page.title}</h2>
                   <span className="bg-[#E62E2E]/10 border border-[#E62E2E]/30 text-[#E62E2E] text-[9px] font-bold tracking-wider px-2.5 py-1 uppercase rounded-none">
-                    PELIGRO: {page.dangerLevel}
+                    DANGER: {page.dangerLevel}
                   </span>
                 </div>
                 <p className="text-xs text-[#AAAAAA]">{page.subtitle}</p>
@@ -899,14 +898,14 @@ export default function Home() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-[#121212] border border-[#222222] p-5 space-y-3">
-                  <h4 className="font-sans font-bold text-xs text-white tracking-wider">QUÉ HACER:</h4>
+                  <h4 className="font-sans font-bold text-xs text-white tracking-wider">WHAT TO DO:</h4>
                   <ul className="text-xs text-[#AAAAAA] space-y-2 list-disc pl-4 leading-relaxed">
                     {page.whatToDo?.map((item, idx) => <li key={idx}>{item}</li>)}
                   </ul>
                 </div>
 
                 <div className="bg-[#121212] border border-[#222222] p-5 space-y-3">
-                  <h4 className="font-sans font-bold text-xs text-[#E62E2E] tracking-wider">QUÉ NO HACER NUNCA:</h4>
+                  <h4 className="font-sans font-bold text-xs text-[#E62E2E] tracking-wider">WHAT NEVER TO DO:</h4>
                   <ul className="text-xs text-[#AAAAAA] space-y-2 list-disc pl-4 leading-relaxed">
                     {page.whatNOTToDo?.map((item, idx) => <li key={idx}>{item}</li>)}
                   </ul>
@@ -916,7 +915,7 @@ export default function Home() {
               {page.vetScript && (
                 <div className="bg-[#1A1A1A] border border-[#E62E2E]/20 p-5 space-y-2">
                   <h4 className="font-sans font-bold text-xs text-white tracking-wider flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-[#E62E2E]" /> GUION PARA EL VETERINARIO:
+                    <Activity className="w-4 h-4 text-[#E62E2E]" /> VET SCRIPT:
                   </h4>
                   <p className="text-xs text-[#AAAAAA] italic leading-relaxed">
                     {page.vetScript}
@@ -934,9 +933,9 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Rojo */}
+              {/* Red */}
               <div className="bg-[#E62E2E]/5 border border-[#E62E2E]/20 p-6 space-y-4">
-                <h4 className="font-sans font-bold text-sm text-[#E62E2E] tracking-wider border-b border-[#E62E2E]/20 pb-2">ROJO: OBSTRUCCIÓN CRÍTICA</h4>
+                <h4 className="font-sans font-bold text-sm text-[#E62E2E] tracking-wider border-b border-[#E62E2E]/20 pb-2">RED: CRITICAL OBSTRUCTION</h4>
                 <ul className="space-y-2">
                   {page.redSymptoms?.map((s, idx) => (
                     <li key={idx} className="text-xs text-[#AAAAAA] leading-relaxed flex items-start gap-1.5">
@@ -946,9 +945,9 @@ export default function Home() {
                 </ul>
               </div>
 
-              {/* Amarillo */}
+              {/* Yellow */}
               <div className="bg-[#E8A000]/5 border border-[#E8A000]/20 p-6 space-y-4">
-                <h4 className="font-sans font-bold text-sm text-[#E8A000] tracking-wider border-b border-[#E8A000]/20 pb-2">AMARILLO: OBSTRUCCIÓN PARCIAL</h4>
+                <h4 className="font-sans font-bold text-sm text-[#E8A000] tracking-wider border-b border-[#E8A000]/20 pb-2">YELLOW: PARTIAL OBSTRUCTION</h4>
                 <ul className="space-y-2">
                   {page.yellowSymptoms?.map((s, idx) => (
                     <li key={idx} className="text-xs text-[#AAAAAA] leading-relaxed flex items-start gap-1.5">
@@ -958,9 +957,9 @@ export default function Home() {
                 </ul>
               </div>
 
-              {/* Verde */}
+              {/* Green */}
               <div className="bg-[#1E8A3E]/5 border border-[#1E8A3E]/20 p-6 space-y-4">
-                <h4 className="font-sans font-bold text-sm text-[#1E8A3E] tracking-wider border-b border-[#1E8A3E]/20 pb-2">VERDE: EPISODIO RESUELTO</h4>
+                <h4 className="font-sans font-bold text-sm text-[#1E8A3E] tracking-wider border-b border-[#1E8A3E]/20 pb-2">GREEN: EPISODE RESOLVED</h4>
                 <ul className="space-y-2">
                   {page.greenSymptoms?.map((s, idx) => (
                     <li key={idx} className="text-xs text-[#AAAAAA] leading-relaxed flex items-start gap-1.5">
@@ -1025,12 +1024,12 @@ export default function Home() {
                 onClick={() => setIsInteractiveMode(true)}
                 className="bg-[#E62E2E] hover:bg-[#c22020] text-white font-sans font-bold tracking-widest rounded-none h-14 text-xs px-10 transition-all active:scale-[0.98] shadow-[0_0_30px_rgba(230,46,46,0.3)]"
               >
-                ABRIR GUÍA INTERACTIVA
+                OPEN INTERACTIVE GUIDE
               </Button>
             </div>
           </div>
         ) : (
-          /* PÁGINA DE CIERRE */
+          /* CLOSING PAGE */
           <div className="max-w-2xl mx-auto text-center space-y-8">
             <div className="flex flex-col items-center mb-6">
               <img src="/logo-panik.png" alt="PANIK Logo" className="h-[64px] object-contain mb-4 filter drop-shadow-[0_0_15px_rgba(230,46,46,0.2)]" />
@@ -1059,7 +1058,7 @@ export default function Home() {
 
       </main>
 
-      {/* CONTROLES DE NAVEGACIÓN EDITORIAL */}
+      {/* EDITORIAL NAVIGATION CONTROLS */}
       <footer className="border-t border-[#1A1A1A] p-4 flex items-center justify-between z-10 bg-black/40">
         <Button
           variant="ghost"
@@ -1067,7 +1066,7 @@ export default function Home() {
           disabled={currentPage === 0}
           className="text-[#AAAAAA] hover:text-white text-xs tracking-widest font-bold disabled:opacity-30 hover:bg-transparent"
         >
-          <ChevronLeft className="w-4 h-4 mr-1" /> ANTERIOR
+          <ChevronLeft className="w-4 h-4 mr-1" /> PREVIOUS
         </Button>
 
         <div className="flex items-center gap-1.5">
@@ -1090,7 +1089,7 @@ export default function Home() {
           disabled={currentPage === HANDBOOK_PAGES.length - 1}
           className="text-[#AAAAAA] hover:text-white text-xs tracking-widest font-bold disabled:opacity-30 hover:bg-transparent"
         >
-          SIGUIENTE <ChevronRight className="w-4 h-4 ml-1" />
+          NEXT <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </footer>
     </div>

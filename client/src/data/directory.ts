@@ -1,10 +1,10 @@
 // ════════════════════════════════════════════════════════════════
-// DIRECTORIO DE EMERGENCIAS — CONFIGURACIÓN CENTRALIZADA
+// EMERGENCY DIRECTORY — CENTRALIZED CONFIGURATION
 // ════════════════════════════════════════════════════════════════
-// Edita esta lista para adaptar PANIK a otra ciudad o país.
-// Cada contacto requiere: name, phone, desc.
-// El campo "phone" debe incluir el formato visible (con espacios);
-// el enlace tel: se genera automáticamente removiendo espacios.
+// Edit this list to adapt PANIK to another city or country.
+// Each contact requires: name, phone, desc.
+// The "phone" field should include the visible format (with spaces);
+// the tel: link is generated automatically by removing spaces.
 // ════════════════════════════════════════════════════════════════
 
 export interface EmergencyContact {
@@ -14,50 +14,45 @@ export interface EmergencyContact {
 }
 
 export interface DirectoryConfig {
-  region: string;          // Nombre de la región/ciudad mostrado en UI
+  region: string;          // Region/city name shown in UI
   contacts: EmergencyContact[];
 }
 
 export const EMERGENCY_DIRECTORY: DirectoryConfig = {
-  region: "CDMX",
+  region: "USA",
   contacts: [
     {
-      name: "VetEmergencias (Lomas)",
-      phone: "55 5540 0757",
-      desc: "Atención crítica 24 horas."
+      name: "ASPCA Animal Poison Control",
+      phone: "888 426 4435",
+      desc: "24/7 animal poison & emergency hotline."
     },
     {
-      name: "Hospital Veterinario UNAM",
-      phone: "55 5622 5860",
-      desc: "Especialistas y urgencias CDMX."
+      name: "Pet Poison Helpline",
+      phone: "855 764 7661",
+      desc: "24/7 veterinary toxicology support."
     },
     {
-      name: "Animal House (Del Valle)",
-      phone: "55 5543 5050",
-      desc: "Hospital veterinario 24/7."
+      name: "VCA Animal Hospitals",
+      phone: "800 822 7387",
+      desc: "Nationwide 24-hour emergency veterinary care."
     },
     {
-      name: "VCA Vetcare (Polanco)",
-      phone: "55 5280 0200",
-      desc: "Urgencias y cuidados intensivos."
+      name: "BluePearl Pet Hospital",
+      phone: "844 728 3223",
+      desc: "Emergency & specialty vet care, multiple locations."
     },
     {
-      name: "Clínica Veterinaria Pedregal",
-      phone: "55 5611 3535",
-      desc: "Urgencias generales y hospitalización."
+      name: "Banfield Pet Hospital",
+      phone: "888 649 2716",
+      desc: "Urgent care and wellness — nationwide locations."
     },
     {
-      name: "Locatel CDMX",
-      phone: "800 727 4770",
-      desc: "Directorio veterinario y apoyo de emergencias."
-    },
-    {
-      name: "Emergencias Nacionales",
+      name: "Emergency Services",
       phone: "911",
-      desc: "Línea de auxilio general."
+      desc: "General emergency line — fire, police, EMS."
     }
   ]
 };
 
-// Helper para generar el href tel: a partir del teléfono visible
+// Helper to generate tel: href from visible phone number
 export const toTelHref = (phone: string): string => `tel:${phone.replace(/\s/g, "")}`;

@@ -1,221 +1,221 @@
 import { EMERGENCY_DIRECTORY } from "./directory";
 
 // ════════════════════════════════════════════════════════════════
-// HANDBOOK_PAGES — Sistema "Mi perro se está ahogando"
-// 15 páginas · Misma arquitectura del manual PANIK original
+// HANDBOOK_PAGES — "My Dog Is Choking" System
+// 15 pages · Same PANIK original manual architecture
 // ════════════════════════════════════════════════════════════════
 
 export const HANDBOOK_PAGES = [
   {
     id: 1,
-    title: "Mi perro se está ahogando",
-    subtitle: "¿Qué hago en los primeros 60 segundos?",
-    badge: "SISTEMA DE ACCIÓN INMEDIATA · CDMX",
+    title: "My Dog Is Choking",
+    subtitle: "What do I do in the first 60 seconds?",
+    badge: "IMMEDIATE ACTION SYSTEM · USA",
     type: "cover",
     bgImage: "/dog-choking-closeup.png",
-    description: "Manual de decisión táctica y diagnóstico rápido para dueños de mascotas bajo tensión extrema. Atragantamiento y asfixia por cuerpo extraño."
+    description: "Tactical decision manual and rapid triage for pet owners under extreme stress. Choking and airway obstruction by foreign body."
   },
   {
     id: 2,
-    title: "Por qué existe este manual",
-    subtitle: "El pánico paraliza. La preparación salva vidas.",
+    title: "Why This Manual Exists",
+    subtitle: "Panic paralyzes. Preparation saves lives.",
     type: "editorial",
-    content: "Cuando un perro se atraganta, los primeros 60 a 90 segundos son la 'Ventana de Oro'. A diferencia de una intoxicación, aquí no hay tiempo para llamar primero: el cerebro empieza a sufrir daño por falta de oxígeno en minutos. El pánico hace que la gente busque en internet, grite, o intente sacar el objeto a ciegas empujándolo más adentro. Este manual físico/PDF te prepara ANTES de la emergencia, memorizando la secuencia correcta en tu cuerpo. La app interactiva te guía paso a paso DURANTE la crisis, sin necesidad de leer párrafos largos. Juntos, forman un ecosistema operativo diseñado para actuar con precisión quirúrgica cuando el reloj no perdona."
+    content: "When a dog chokes, the first 60 to 90 seconds are the 'Golden Window.' Unlike poisoning, there is no time to call first: the brain begins to suffer oxygen deprivation damage within minutes. Panic causes people to search online, scream, or blindly reach into the dog's mouth — pushing the object even deeper. This physical manual/PDF prepares you BEFORE the emergency by memorizing the correct sequence. The interactive app guides you step by step DURING the crisis, without needing to read long paragraphs. Together, they form an operating system designed to act with precision when every second counts."
   },
   {
     id: 3,
-    title: "Causas Más Comunes",
-    subtitle: "Qué provoca atragantamiento en perros dentro del hogar",
+    title: "Most Common Causes",
+    subtitle: "What triggers choking in dogs at home",
     type: "data",
-    content: "La mayoría de los episodios de atragantamiento ocurren durante el juego o la alimentación sin supervisión. Conocer el objeto más probable ayuda a anticipar el riesgo antes de que ocurra.",
+    content: "Most choking episodes happen during play or unsupervised feeding. Knowing the most likely object helps you anticipate the risk before it occurs.",
     stats: [
-      { label: "Huesos y Trozos de Comida", value: "38%", desc: "Huesos de pollo, costillas y trozos grandes de premio o carne." },
-      { label: "Pelotas y Juguetes", value: "29%", desc: "Pelotas de tenis, juguetes de hule pequeños o partes rotas de juguetes." },
-      { label: "Palos y Madera", value: "18%", desc: "Ramas astilladas durante el juego de buscar y traer." },
-      { label: "Objetos del Hogar", value: "15%", desc: "Tapas de botella, agujas, anzuelos, collares enganchados." }
+      { label: "Bones & Food Chunks", value: "38%", desc: "Chicken bones, ribs, and large treat or meat pieces." },
+      { label: "Balls & Toys", value: "29%", desc: "Tennis balls, small rubber toys, or broken toy parts." },
+      { label: "Sticks & Wood", value: "18%", desc: "Splintered branches during fetch or outdoor play." },
+      { label: "Household Objects", value: "15%", desc: "Bottle caps, needles, fish hooks, snagged collars." }
     ]
   },
   {
     id: 4,
-    title: "Señales de Alarma",
-    subtitle: "Aprende a diagnosticar la gravedad visualmente",
+    title: "Warning Signs",
+    subtitle: "Learn to assess severity at a glance",
     type: "semaphore",
     levels: [
       {
         color: "red",
-        title: "ROJO: OBSTRUCCIÓN CRÍTICA",
-        desc: "No respira, encías azules/moradas/grises, pierde el conocimiento, no puede tragar o babea sin control, rasca su cara con desesperación.",
-        action: "Maniobra de Heimlich inmediata. Llama al veterinario mientras actúas. Traslado sin esperar mejoría."
+        title: "RED: CRITICAL OBSTRUCTION",
+        desc: "Not breathing, blue/purple/gray gums, losing consciousness, unable to swallow or drooling uncontrollably, pawing at face desperately.",
+        action: "Apply the Heimlich maneuver immediately. Call the vet while you act. Transport without waiting for improvement."
       },
       {
         color: "yellow",
-        title: "AMARILLO: OBSTRUCCIÓN PARCIAL",
-        desc: "Tose con esfuerzo pero entra algo de aire, estira el cuello hacia adelante, hace ruidos roncos al respirar, está inquieto pero responde.",
-        action: "Mantén la calma del perro. No le des agua ni comida. Llama al veterinario y monitorea cada minuto."
+        title: "YELLOW: PARTIAL OBSTRUCTION",
+        desc: "Coughing forcefully but some air is getting through, neck extended forward, raspy breathing sounds, agitated but still responsive.",
+        action: "Keep the dog calm. No water or food. Call the vet and monitor every minute."
       },
       {
         color: "green",
-        title: "VERDE: EPISODIO RESUELTO",
-        desc: "Tosió con fuerza, expulsó el objeto o tragó, respira con normalidad, encías rosadas, comportamiento estable.",
-        action: "Observa 20-30 minutos. Revisa la boca por residuos. Llama al veterinario para documentar el episodio."
+        title: "GREEN: EPISODE RESOLVED",
+        desc: "Coughed hard and expelled or swallowed the object, breathing normally, pink gums, stable behavior.",
+        action: "Observe for 20–30 minutes. Check the mouth for residue. Call the vet to document the episode."
       }
     ]
   },
   {
     id: 5,
-    title: "Cinco Hábitos de Prevención",
-    subtitle: "Cómo blindar tu hogar contra atragantamientos",
+    title: "Five Prevention Habits",
+    subtitle: "How to dog-proof your home against choking",
     type: "prevention",
     habits: [
-      { num: "01", title: "Tamaño Correcto de Juguetes", desc: "Cualquier juguete o pelota que entre completo en la boca de tu perro sin tocar los dientes traseros es un riesgo de obstrucción de tráquea." },
-      { num: "02", title: "Huesos Bajo Supervisión Total", desc: "Nunca dejes a tu perro solo con huesos de pollo, costilla o pavo. Se fragmentan en astillas filosas que se atoran o perforan." },
-      { num: "03", title: "Revisa Juguetes Rotos al Instante", desc: "Retira de inmediato cualquier juguete con piezas sueltas, rellenos expuestos o partes de hule desprendidas." },
-      { num: "04", title: "Supervisión en el Juego de Traer", desc: "Evita palos largos y delgados — se astillan en la boca y la garganta al morder o caer mal." },
-      { num: "05", title: "Áreas de Costura y Anzuelos Restringidas", desc: "Agujas, hilo, anzuelos de pesca y tapas de botella deben quedar fuera del alcance; son tragados con facilidad y son extremadamente peligrosos." }
+      { num: "01", title: "Right-Size Toys Always", desc: "Any toy or ball that fits entirely in your dog's mouth without touching the back teeth is a tracheal obstruction risk." },
+      { num: "02", title: "Supervised Bone Time Only", desc: "Never leave your dog alone with chicken, rib, or turkey bones. They splinter into sharp shards that lodge or puncture." },
+      { num: "03", title: "Remove Broken Toys Immediately", desc: "Pull any toy with loose parts, exposed stuffing, or detached rubber pieces right away." },
+      { num: "04", title: "Supervised Fetch Sessions", desc: "Avoid long, thin sticks — they splinter in the mouth and throat when bitten or when the dog falls on them." },
+      { num: "05", title: "Restrict Sewing & Fishing Areas", desc: "Needles, thread, fish hooks, and bottle caps must be out of reach; they are easily swallowed and extremely dangerous." }
     ]
   },
   {
     id: 6,
-    title: "Kit de Preparación Táctica",
-    subtitle: "Lo que debes tener listo antes de la crisis",
+    title: "Tactical Preparedness Kit",
+    subtitle: "What to have ready before the crisis",
     type: "kit",
     bgImage: "/panik_emergency_kit_choking.png",
     sections: [
       {
-        title: "EQUIPAMIENTO",
-        items: ["Toallas o tela limpia para sujetar y secar", "Linterna de celular siempre cargada", "Correa corta para traslado de emergencia", "Caja o tabla rígida para cargar perros pequeños"]
+        title: "EQUIPMENT",
+        items: ["Clean towels or cloth to grip and dry", "Cell phone flashlight always charged", "Short leash for emergency transport", "Rigid box or board for carrying small dogs"]
       },
       {
-        title: "CONOCIMIENTO PREVIO",
-        items: ["Memoriza la maniobra de Heimlich para el tamaño de tu perro", "Identifica la ruta más rápida al hospital veterinario 24h", "Guarda el peso aproximado de tu perro en el celular", "Practica revisar la boca de tu perro sin que se asuste"]
+        title: "PRIOR KNOWLEDGE",
+        items: ["Memorize the Heimlich maneuver for your dog's size", "Identify the fastest route to the nearest 24-hour emergency vet", "Save your dog's approximate weight in your phone", "Practice checking your dog's mouth without causing fear"]
       },
       {
-        title: "CONTACTOS",
-        items: ["Teléfono del veterinario de cabecera guardado y visible", "Número de 2 hospitales 24 horas cercanos", "Línea de emergencia PANIK de tu ciudad", "Contacto de un vecino o familiar que pueda ayudarte a trasladar"]
+        title: "CONTACTS",
+        items: ["Primary vet phone number saved and visible", "Two nearest 24-hour emergency hospitals", "PANIK emergency line for your area", "Neighbor or family member who can help transport"]
       }
     ]
   },
   {
     id: 7,
-    title: "Escenario 01: Hueso Atorado",
-    subtitle: "La causa más común y más peligrosa",
+    title: "Scenario 01: Bone Lodged",
+    subtitle: "The most common and most dangerous cause",
     type: "scenario",
     bgImage: "/panik_scenario_bone.png",
-    dangerLevel: "ROJO / AMARILLO (Según ubicación)",
+    dangerLevel: "RED / YELLOW (Depends on location)",
     whatToDo: [
-      "Si el hueso está atorado en la garganta y el perro no respira o no puede tragar: aplica Heimlich de inmediato.",
-      "Si el perro tose con esfuerzo pero entra aire, mantenlo en calma — la tos puede expulsarlo solo.",
-      "Si logras ver el hueso y está suelto en la boca, retíralo con dos dedos SIN empujarlo más adentro."
+      "If the bone is lodged in the throat and the dog cannot breathe or swallow: apply the Heimlich maneuver immediately.",
+      "If the dog is coughing forcefully but air is getting through, keep them calm — natural coughing may dislodge the bone on its own.",
+      "If you can see the bone and it is loose in the mouth, remove it with two fingers WITHOUT pushing it deeper."
     ],
     whatNOTToDo: [
-      "NUNCA metas la mano a ciegas si no ves el objeto — puedes empujarlo más profundo y cerrar la vía por completo.",
-      "No le des agua ni comida pensando que 'ayudará a pasarlo'. Puede empeorar la obstrucción o provocar aspiración."
+      "NEVER reach in blindly if you cannot see the object — you may push it deeper and fully close the airway.",
+      "Do not give water or food thinking it will 'help wash it down.' This can worsen the obstruction or cause aspiration."
     ],
-    vetScript: "Mi perro se atoró con un hueso hace [X] minutos. [Pudo / no pudo] expulsarlo. Sus encías están [color]. [Está / no está] respirando con dificultad."
+    vetScript: "My dog got a bone stuck about [X] minutes ago. They [were / were not] able to cough it out. Their gums are [color]. They [are / are not] having trouble breathing."
   },
   {
     id: 8,
-    title: "Escenario 02: Pelota o Juguete",
-    subtitle: "Bloqueo total de tráquea en segundos",
+    title: "Scenario 02: Ball or Toy",
+    subtitle: "Full tracheal blockage in seconds",
     type: "scenario",
     bgImage: "/panik_scenario_ball.png",
-    dangerLevel: "ROJO ABSOLUTO",
+    dangerLevel: "ABSOLUTE RED",
     whatToDo: [
-      "Si la pelota quedó alojada en la garganta y bloquea la respiración: Heimlich inmediato, sin esperar.",
-      "Empuja desde atrás de las costillas hacia arriba con fuerza controlada — el objetivo es generar una tos forzada que expulse el objeto.",
-      "Si el perro pierde el conocimiento, revisa la boca y retira el objeto solo si lo ves y puedes alcanzarlo sin empujarlo."
+      "If the ball is lodged in the throat and blocking breathing: apply the Heimlich maneuver immediately, do not wait.",
+      "Push from behind the ribcage upward with controlled force — the goal is to generate a forced cough that expels the object.",
+      "If the dog loses consciousness, check the mouth and remove the object only if you can see it and reach it without pushing it deeper."
     ],
     whatNOTToDo: [
-      "NUNCA intentes 'empujar' la pelota hacia el estómago pensando que 'allá no hace daño' — puede quedar igualmente atorada más abajo y causar daño interno.",
-      "No pierdas tiempo buscando el objeto exacto antes de actuar. Actúa primero, identifica después."
+      "NEVER try to 'push' the ball toward the stomach thinking 'it won't cause harm there' — it can get stuck further down and cause internal damage.",
+      "Do not waste time identifying the exact object before acting. Act first, identify after."
     ],
-    vetScript: "Mi perro tenía una pelota/juguete en la boca y se atoró hace [X] minutos. [Logré / no logré] sacarla con Heimlich. Actualmente [respira con dificultad / respira normal]."
+    vetScript: "My dog had a ball/toy in their mouth and choked about [X] minutes ago. I [was / was not] able to dislodge it with the Heimlich. They are currently [breathing with difficulty / breathing normally]."
   },
   {
     id: 9,
-    title: "Escenario 03: Palo Astillado",
-    subtitle: "Riesgo doble: obstrucción y perforación",
+    title: "Scenario 03: Splintered Stick",
+    subtitle: "Double risk: obstruction and puncture",
     type: "scenario",
     bgImage: "/panik_scenario_stick.png",
-    dangerLevel: "ROJO / AMARILLO",
+    dangerLevel: "RED / YELLOW",
     whatToDo: [
-      "Si el palo está atravesado en la boca o garganta y el perro no puede cerrar la boca: NO lo jales — busca ayuda veterinaria para retirarlo de forma segura.",
-      "Si hay dificultad para respirar por obstrucción de vía aérea: aplica Heimlich igual que con cualquier objeto sólido.",
-      "Revisa si hay sangrado activo en la boca o garganta — esto indica posible perforación y requiere traslado inmediato sin importar si respira bien."
+      "If the stick is lodged across the mouth or throat and the dog cannot close their mouth: do NOT pull it — seek veterinary help to remove it safely.",
+      "If there is breathing difficulty due to airway obstruction: apply the Heimlich maneuver as you would with any solid object.",
+      "Check for active bleeding in the mouth or throat — this indicates a possible puncture and requires immediate transport regardless of breathing status."
     ],
     whatNOTToDo: [
-      "NUNCA jales un palo o astilla visible con fuerza — puedes causar laceraciones internas mayores al retirarlo mal.",
-      "No asumas que 'si ya tosió y parece estar bien' no hay riesgo. Las astillas pueden perforar tejido y causar infección horas después."
+      "NEVER forcefully pull a visible stick or splinter — improper removal can cause major internal lacerations.",
+      "Do not assume that 'if they coughed and seem fine' there is no risk. Splinters can puncture tissue and cause infection hours later."
     ],
-    vetScript: "Mi perro mordió un palo y [se atoró / se lastimó la boca] hace [X] minutos. [Hay / no hay] sangrado visible. [Está / no está] respirando con dificultad."
+    vetScript: "My dog bit a stick and [choked / injured their mouth] about [X] minutes ago. There [is / is no] visible bleeding. They [are / are not] having trouble breathing."
   },
   {
     id: 10,
-    title: "Escenario 04: Objeto Punzante",
-    subtitle: "Agujas, anzuelos y tapas — peligro silencioso",
+    title: "Scenario 04: Sharp Object",
+    subtitle: "Needles, fish hooks, and bottle caps — silent danger",
     type: "scenario",
     bgImage: "/panik_scenario_sharp.png",
-    dangerLevel: "ROJO ABSOLUTO",
+    dangerLevel: "ABSOLUTE RED",
     whatToDo: [
-      "Si el objeto está visible y suelto en la boca: retíralo con cuidado extremo solo si no está incrustado en tejido.",
-      "Si el objeto está incrustado (anzuelo, aguja clavada) NO lo retires tú — traslado inmediato al veterinario sin manipular más.",
-      "Si hay dificultad respiratoria por obstrucción: Heimlich, pero con movimientos más controlados para no empujar el objeto contra tejido."
+      "If the object is visible and loose in the mouth: remove it with extreme care only if it is not embedded in tissue.",
+      "If the object is embedded (fish hook, lodged needle) do NOT remove it yourself — transport immediately to a vet without further manipulation.",
+      "If there is breathing difficulty due to obstruction: apply the Heimlich maneuver, but with more controlled movements to avoid pushing the object into tissue."
     ],
     whatNOTToDo: [
-      "NUNCA intentes retirar un anzuelo o aguja clavada jalando — puedes desgarrar tejido y causar una hemorragia mayor.",
-      "No ignores la situación si el perro 'parece estar bien' después de tragar algo punzante — el daño interno puede no ser visible de inmediato."
+      "NEVER try to pull out a lodged hook or needle — you may tear tissue and cause a major hemorrhage.",
+      "Do not ignore the situation if the dog 'seems fine' after swallowing something sharp — internal damage may not be immediately visible."
     ],
-    vetScript: "Mi perro [tragó / se atoró con] un objeto punzante ([aguja / anzuelo / tapa]) hace [X] minutos. [Está / no está] incrustado visible. [Respira con dificultad / respira normal]."
+    vetScript: "My dog [swallowed / choked on] a sharp object ([needle / fish hook / bottle cap]) about [X] minutes ago. It [is / is not] visibly embedded. They [are / are not] breathing with difficulty."
   },
   {
     id: 11,
-    title: "Escenario 05: Correa o Collar Atrapado",
-    subtitle: "Asfixia mecánica, no por objeto tragado",
+    title: "Scenario 05: Collar or Leash Caught",
+    subtitle: "Mechanical asphyxiation — not from a swallowed object",
     type: "scenario",
     bgImage: "/panik_scenario_leash.png",
-    dangerLevel: "ROJO ABSOLUTO",
+    dangerLevel: "ABSOLUTE RED",
     whatToDo: [
-      "Si el collar o correa está enganchado en algo y el perro se está ahorcando al jalar: corta la correa o el collar de inmediato, no intentes desenredarlo.",
-      "Si el collar quedó demasiado apretado por hinchazón o por engancharse: corta la correa primero, afloja el collar después con cuidado.",
-      "Una vez liberado, revisa si respira y si las encías recuperan color rosado en los primeros segundos."
+      "If the collar or leash is caught on something and the dog is choking from pulling: cut the leash or collar immediately — do not try to untangle it.",
+      "If the collar became too tight from swelling or snagging: cut the leash first, then carefully loosen the collar.",
+      "Once freed, check whether they are breathing and whether the gums return to pink within the first few seconds."
     ],
     whatNOTToDo: [
-      "NUNCA pierdas tiempo buscando las llaves del candado o intentando desenredar nudos — corta el material con tijeras o navaja de inmediato.",
-      "No retires el collar por completo si sospechas lesión cervical — corta solo lo necesario para liberar la presión y traslada con cuidado."
+      "NEVER waste time looking for a lock key or trying to untie knots — cut the material with scissors or a knife immediately.",
+      "Do not fully remove the collar if you suspect a neck injury — cut only what is needed to relieve pressure and transport carefully."
     ],
-    vetScript: "El collar/correa de mi perro quedó atrapado y [se ahorcó / hizo presión] durante aproximadamente [X] minutos. [Recuperó / no ha recuperado] su respiración normal."
+    vetScript: "My dog's collar/leash got caught and [choked / applied pressure] for approximately [X] minutes. They [have / have not] returned to normal breathing."
   },
   {
     id: 12,
-    title: "Semáforo de Decisión Rápida",
-    subtitle: "Referencia de bolsillo para imprimir o guardar",
+    title: "Quick Decision Semaphore",
+    subtitle: "Pocket reference — print or save to your phone",
     type: "semaphore_quick",
-    redSymptoms: ["No respira o boqueo sin aire entrando", "Encías azules, moradas o grises", "Pérdida de conocimiento o colapso", "No puede tragar / babeo sin control", "Rasca su cara con desesperación"],
-    yellowSymptoms: ["Tose con esfuerzo pero entra algo de aire", "Estira el cuello hacia adelante al respirar", "Ruidos roncos o silbidos al inhalar", "Inquietud marcada pero responde a su nombre", "Lleva más de 1 minuto en el mismo estado"],
-    greenSymptoms: ["Tosió fuerte y expulsó el objeto o lo tragó", "Respiración normal y silenciosa", "Encías de color rosa saludable", "Comportamiento tranquilo o curioso, sin angustia"]
+    redSymptoms: ["Not breathing or gasping with no air entering", "Blue, purple, or gray gums", "Loss of consciousness or collapse", "Unable to swallow / drooling uncontrollably", "Pawing at face desperately"],
+    yellowSymptoms: ["Coughing forcefully but some air is getting through", "Neck stretched forward when breathing", "Raspy or wheezing sounds when inhaling", "Agitated but still responds to their name", "Has been in this state for more than 1 minute"],
+    greenSymptoms: ["Coughed hard and expelled or swallowed the object", "Normal, quiet breathing", "Healthy pink gum color", "Calm or curious behavior, no signs of distress"]
   },
   {
     id: 13,
-    title: `Directorio de Emergencias ${EMERGENCY_DIRECTORY.region}`,
-    subtitle: "Guarda estos números en tus contactos de inmediato",
+    title: `Emergency Directory ${EMERGENCY_DIRECTORY.region}`,
+    subtitle: "Save these numbers in your contacts right now",
     type: "directory",
     bgImage: "/panik_phone_emergency.png",
     contacts: EMERGENCY_DIRECTORY.contacts
   },
   {
     id: 14,
-    title: "Accede a tu Guía Interactiva",
-    subtitle: "El sistema completo en la palma de tu mano",
+    title: "Access Your Interactive Guide",
+    subtitle: "The full system in the palm of your hand",
     type: "cta_page",
-    content: "Este manual en PDF te prepara para memorizar la secuencia correcta antes de la crisis. Sin embargo, en el momento exacto del atragantamiento, no hay tiempo para leer: necesitas una interfaz táctica que te diga exactamente qué hacer en 3 clics. Abre la guía interactiva mobile-first ahora mismo, agrégala a la pantalla de inicio de tu celular y mantén la calma tecnológica cuando los segundos cuenten."
+    content: "This PDF manual prepares you to memorize the correct sequence before a crisis hits. However, in the exact moment your dog is choking, there is no time to read: you need a tactical interface that tells you exactly what to do in 3 taps. Open the mobile-first interactive guide right now, add it to your phone's home screen, and keep your head clear when every second counts."
   },
   {
     id: 15,
-    title: "Guarda este manual.",
-    subtitle: "Comparte la guía interactiva.",
+    title: "Save this manual.",
+    subtitle: "Share the interactive guide.",
     type: "closing",
     web: "somospanik.com",
     social: ["@somospanik", "@somos.panik"],
-    disclaimer: "PANIK es una marca registrada. Este manual es una guía de acción rápida y no sustituye el diagnóstico de un médico veterinario profesional."
+    disclaimer: "PANIK is a registered trademark. This manual is a quick-action guide and does not replace the diagnosis of a licensed veterinary professional."
   }
 ];
